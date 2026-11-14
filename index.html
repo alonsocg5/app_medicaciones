@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MediNeni</title>
+<meta name="theme-color" content="#0a1633">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MediNeni">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%230a1633%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2322397a%22/%3E%3C/linearGradient%3E%3CclipPath%20id%3D%22cap%22%3E%3Crect%20x%3D%22-150%22%20y%3D%22-62%22%20width%3D%22300%22%20height%3D%22124%22%20rx%3D%2262%22/%3E%3C/clipPath%3E%3C/defs%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20fill%3D%22url%28%23bg%29%22/%3E%3Cg%20transform%3D%22translate%28256%20256%29%20rotate%28-40%29%22%3E%3Cg%20clip-path%3D%22url%28%23cap%29%22%3E%3Crect%20x%3D%22-150%22%20y%3D%22-62%22%20width%3D%22150%22%20height%3D%22124%22%20fill%3D%22%23ffffff%22/%3E%3Crect%20x%3D%220%22%20y%3D%22-62%22%20width%3D%22150%22%20height%3D%22124%22%20fill%3D%22%237ea2ff%22/%3E%3Crect%20x%3D%22-150%22%20y%3D%22-62%22%20width%3D%22300%22%20height%3D%2232%22%20fill%3D%22%23ffffff%22%20opacity%3D%22.2%22/%3E%3C/g%3E%3Crect%20x%3D%22-3%22%20y%3D%22-62%22%20width%3D%226%22%20height%3D%22124%22%20fill%3D%22%230a1633%22%20opacity%3D%22.25%22/%3E%3C/g%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{
+    --bg:#f2f4fa; --surface:#ffffff; --surface-2:#eef1f8; --text:#131a30; --muted:#5a6382;
+    --line:#dfe3ef; --accent:#1d3a8a; --accent-ink:#ffffff; --accent-soft:#e3e9fb;
+    --night1:#0a1633; --night2:#22397a; --night-ink:#b8c5ee;
+    --danger:#b42318; --danger-soft:#fde8e6; --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05);
+    --radius:14px;
+    --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#070d1d; --surface:#101934; --surface-2:#17223f; --text:#e6eaf6; --muted:#98a2c2;
+      --line:#233054; --accent:#93b1ff; --accent-ink:#0a1633; --accent-soft:#1b2a54;
+      --night1:#050b1c; --night2:#18295c;
+      --danger:#f0746a; --danger-soft:#3a1f1c; --shadow:none;
+    }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior-y:contain}
+  button{font:inherit;color:inherit;cursor:pointer}
+  input,textarea{font:inherit;color:inherit}
+  .hidden{display:none!important}
+
+  /* ---------- hero ---------- */
+  body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--st);background:var(--night1);z-index:40}
+  .hero{position:relative;color:#fff;background:linear-gradient(160deg,var(--night1) 0%,#132760 65%,var(--night2) 100%);padding:calc(var(--st) + 6px) 14px 14px 16px;border-radius:0 0 22px 22px}
+  .hero-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:.005em}
+  .brand svg{width:30px;height:30px;border-radius:10px;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+  .hero-info{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px;margin-top:4px}
+  .today{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;color:#e3e9ff}
+  .today svg{width:17px;height:17px;opacity:.85}
+  .stats{display:flex;gap:6px}
+  .stat{font-size:12.5px;color:var(--night-ink,#b8c5ee);background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:3px 10px;white-space:nowrap}
+  .stat b{color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
+  .icon-btn{width:44px;height:44px;border-radius:12px;border:0;background:transparent;display:grid;place-items:center}
+  .icon-btn:active{background:var(--surface-2)}
+  .icon-btn svg{width:24px;height:24px}
+  .on-night .icon-btn,.on-night.icon-btn{color:#fff}
+  .on-night .icon-btn:active{background:rgba(255,255,255,.14)}
+  .searchbar{position:sticky;top:var(--st);z-index:5;background:var(--bg);padding:12px 16px 8px}
+  .search{position:relative}
+  .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);pointer-events:none}
+  .search input{width:100%;height:50px;border-radius:var(--radius);border:1px solid var(--line);background:var(--surface);padding:0 46px 0 44px;font-size:17px;outline:none}
+  .search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .search input{box-shadow:0 2px 10px rgba(20,35,90,.06)}
+  .search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+  .search .clear{position:absolute;right:4px;top:50%;transform:translateY(-50%)}
+  .hint{font-size:13px;color:var(--muted);margin:8px 2px 0}
+
+  /* ---------- list ---------- */
+  .list{list-style:none;margin:0;padding:4px 16px calc(var(--sb) + 110px)}
+  .item{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px}
+  .item button{display:block;width:100%;text-align:left;background:none;border:0;padding:14px 16px}
+  .item button:active{background:var(--surface-2);border-radius:var(--radius)}
+  .item-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .item-name{font-weight:600;font-size:17px;word-break:break-word}
+  .item-n{flex:none;font-size:13px;color:var(--muted);white-space:nowrap}
+  .item-note{color:var(--muted);font-size:14px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chips-mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .chip-mini{font-size:13px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-variant-numeric:tabular-nums}
+  .chip-mini.hit{background:var(--accent);color:var(--accent-ink)}
+  .chip-mini.more{background:var(--surface-2);color:var(--muted)}
+  mark{background:transparent;color:var(--accent);font-weight:700}
+  .empty{text-align:center;color:var(--muted);padding:48px 24px}
+  .empty strong{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+
+  .fab{position:fixed;right:18px;bottom:calc(var(--sb) + 20px);z-index:6;height:58px;padding:0 22px 0 18px;border-radius:18px;border:0;background:linear-gradient(150deg,#1b2f6b,#0a1633);color:#fff;font-weight:600;font-size:16px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 22px rgba(12,24,70,.38),inset 0 0 0 1px rgba(255,255,255,.12)}
+  .fab svg{width:24px;height:24px}
+  .fab:active{transform:scale(.97)}
+
+  /* ---------- detail ---------- */
+  .detail{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;transform:translateX(100%);transition:transform .22s ease;-webkit-overflow-scrolling:touch}
+  .detail.open{transform:none}
+  .d-hero{position:sticky;top:0;z-index:2;color:#fff;background:linear-gradient(160deg,var(--night1),#132760 70%,var(--night2));padding:calc(var(--st) + 6px) 8px 14px;border-radius:0 0 24px 24px;box-shadow:0 6px 20px rgba(10,22,51,.18)}
+  .d-top{display:flex;align-items:center;gap:4px}
+  .d-label{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--night-ink,#b8c5ee);padding:4px 10px 0}
+  .d-top .saved{margin-left:auto;margin-right:10px;font-size:13px;color:#cfe0ff;opacity:0;transition:opacity .3s}
+  .d-top .saved.show{opacity:1}
+  .d-body{padding:0 16px calc(var(--sb) + 40px)}
+  .name-input{display:block;width:calc(100% - 20px);margin:0 10px;font-size:25px;font-weight:750;color:#fff;border:0;border-bottom:2px solid transparent;background:transparent;padding:2px 0 6px;outline:none;letter-spacing:-.015em}
+  .name-input::placeholder{color:rgba(255,255,255,.45)}
+  .name-input:focus{border-bottom-color:rgba(255,255,255,.55)}
+  .d-body{padding-top:4px!important}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-top:14px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px;display:flex;justify-content:space-between}
+  .rooms{display:flex;flex-wrap:wrap;gap:8px;min-height:10px}
+  .room{display:flex;align-items:center;gap:2px;background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:0 0 0 14px;height:46px;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+  .room button{width:40px;height:46px;border:0;background:transparent;color:inherit;display:grid;place-items:center;opacity:.75}
+  .room button:active{opacity:1}
+  .room button svg{width:18px;height:18px}
+  .rooms-empty{color:var(--muted);font-size:15px;padding:4px 0 2px}
+  .add-room{display:flex;gap:8px;margin-top:14px}
+  .add-room input{flex:1;min-width:0;height:50px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);padding:0 14px;font-size:18px;outline:none}
+  .add-room input:focus{border-color:var(--accent);background:var(--surface)}
+  .btn{height:50px;border-radius:12px;border:0;padding:0 18px;font-weight:600}
+  .btn-primary{background:var(--accent);color:var(--accent-ink)}
+  .btn-ghost{background:var(--surface-2)}
+  .btn-danger{background:var(--danger-soft);color:var(--danger)}
+  .small{font-size:13px;color:var(--muted);margin-top:8px}
+  textarea{width:100%;min-height:150px;resize:vertical;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);padding:12px 14px;font-size:16px;line-height:1.5;outline:none}
+  textarea:focus{border-color:var(--accent);background:var(--surface)}
+  .meta{color:var(--muted);font-size:13px;text-align:center;margin:18px 0 10px}
+  .del-wrap{display:flex;justify-content:center}
+
+  /* ---------- sheet / dialog ---------- */
+  .scrim{position:fixed;inset:0;z-index:20;background:rgba(5,10,28,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fade .15s ease}
+  .sheet{width:100%;max-width:420px;max-height:calc(100% - 20px);overflow:auto;background:var(--surface);border-radius:24px;padding:22px 20px 20px;box-shadow:0 24px 60px rgba(5,10,30,.35);animation:pop .2s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet .badge{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin:0 0 14px;background:linear-gradient(150deg,#22397a,#0a1633);color:#fff;box-shadow:0 6px 16px rgba(12,24,70,.3)}
+  .sheet .badge svg{width:28px;height:28px}
+  .sheet .badge.danger{background:var(--danger-soft);color:var(--danger);box-shadow:none}
+  .sheet h3{margin:0 0 6px;font-size:19px}
+  .sheet p{margin:0 0 16px;color:var(--muted)}
+  .sheet input[type=text]{width:100%;height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);padding:0 14px;font-size:17px;outline:none;margin-bottom:14px}
+  .sheet input[type=text]:focus{border-color:var(--accent)}
+  .sheet .row{display:flex;gap:10px}
+  .sheet .row .btn{flex:1}
+  .menu-item{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:0;padding:14px 6px;border-radius:12px;font-size:16px}
+  .menu-item:active{background:var(--surface-2)}
+  .menu-item svg{width:22px;height:22px;color:var(--accent);flex:none}
+  .menu-item small{display:block;color:var(--muted);font-size:13px}
+  .copy-area{width:100%;min-height:120px;font:12px/1.4 ui-monospace,monospace;margin-bottom:12px}
+
+  .toast{position:fixed;left:50%;bottom:calc(var(--sb) + 92px);transform:translateX(-50%);z-index:30;background:#0f1a3a;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:14px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.25);width:max-content;max-width:calc(100% - 32px)}
+  .toast button{background:transparent;border:0;color:#9db8ff;font-weight:700;padding:6px 8px}
+</style>
+</head>
+<body>
+
+<!-- ============ LIST VIEW ============ -->
+<header class="hero on-night">
+  <div class="hero-top">
+    <div class="brand"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="lbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1633"/><stop offset="1" stop-color="#22397a"/></linearGradient><clipPath id="lcap"><rect x="-150" y="-62" width="300" height="124" rx="62"/></clipPath></defs><rect width="512" height="512" fill="url(#lbg)"/><g transform="translate(256 256) rotate(-40)"><g clip-path="url(#lcap)"><rect x="-150" y="-62" width="150" height="124" fill="#ffffff"/><rect x="0" y="-62" width="150" height="124" fill="#7ea2ff"/><rect x="-150" y="-62" width="300" height="32" fill="#ffffff" opacity=".2"/></g><rect x="-3" y="-62" width="6" height="124" fill="#0a1633" opacity=".25"/></g></svg><span>MediNeni</span></div>
+    <button class="icon-btn" id="menuBtn" aria-label="Opciones">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+    </button>
+  </div>
+  <div class="hero-info">
+    <div class="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="today"></span></div>
+    <div class="stats">
+      <span class="stat"><b id="stMeds">0</b> <span id="stMedsL">medicaciones</span></span>
+      <span class="stat"><b id="stRooms">0</b> <span id="stRoomsL">hab.</span></span>
+    </div>
+  </div>
+</header>
+<div class="searchbar">
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Buscar medicación o nº hab." autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+    <button class="icon-btn clear hidden" id="qClear" aria-label="Borrar búsqueda">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+</div>
+
+<ul class="list" id="list"></ul>
+
+<button class="fab" id="addBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  Añadir
+</button>
+
+<!-- ============ DETAIL VIEW ============ -->
+<section class="detail" id="detail" aria-hidden="true">
+  <div class="d-hero on-night">
+  <div class="d-top">
+    <button class="icon-btn" id="backBtn" aria-label="Volver">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <span class="saved" id="saved">Guardado ✓</span>
+  </div>
+  <div class="d-label">Medicación</div>
+  <input class="name-input" id="dName" type="text" placeholder="Nombre de la medicación" autocomplete="off">
+  </div>
+  <div class="d-body">
+
+    <div class="card">
+      <h2><span>Habitaciones</span><span id="dRoomCount"></span></h2>
+      <div class="rooms" id="dRooms"></div>
+      <div class="add-room" id="roomForm">
+        <input id="roomInput" type="text" inputmode="numeric" placeholder="Nº habitación" enterkeyhint="done" autocomplete="off" aria-label="Número de habitación">
+        <button class="btn btn-primary" type="button" id="roomAdd">Añadir</button>
+      </div>
+      <div class="small">Puedes añadir varias a la vez separadas por comas o espacios (ej. 101, 102, 215B).</div>
+    </div>
+
+    <div class="card">
+      <h2><span>Notas</span></h2>
+      <textarea id="dNotes" placeholder="Dosis, horario, ubicación en el almacén, observaciones…"></textarea>
+    </div>
+
+    <div class="meta" id="dMeta"></div>
+    <div class="del-wrap"><button class="btn btn-danger" id="delBtn">Eliminar medicación</button></div>
+  </div>
+</section>
+
+<!-- ============ DIALOG HOST ============ -->
+<div id="dialog"></div>
+<div id="toastHost"></div>
+<input type="file" id="importFile" accept="application/json,.json" class="hidden">
+
+<script>
+(() => {
+  'use strict';
+  const KEY = 'farmacia-medicacion-v1';
+  const $ = id => document.getElementById(id);
+
+  // ---------- storage ----------
+  let mem = null; // fallback if localStorage is unavailable
+  function load(){
+    try { const raw = localStorage.getItem(KEY); if (raw) return JSON.parse(raw); } catch(e){}
+    return mem || { meds: [] };
+  }
+  function persist(){
+    data.updatedAt = Date.now();
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){ mem = data; }
+  }
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch(e){}
+
+  let data = load();
+  if (!Array.isArray(data.meds)) data.meds = [];
+
+  // ---------- helpers ----------
+  const norm = s => (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+  const esc = s => (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const collator = new Intl.Collator('es', { numeric:true, sensitivity:'base' });
+  const sortRooms = arr => arr.sort(collator.compare);
+  const byId = id => data.meds.find(m => m.id === id);
+  const fmtDate = t => new Date(t).toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+
+  function highlight(text, q){
+    if (!q) return esc(text);
+    const n = norm(text); const i = n.indexOf(q);
+    if (i < 0) return esc(text);
+    return esc(text.slice(0,i)) + '<mark>' + esc(text.slice(i, i+q.length)) + '</mark>' + esc(text.slice(i+q.length));
+  }
+
+  // ---------- header ----------
+  function renderHeader(){
+    const d = new Date();
+    const s = d.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+    $('today').textContent = s.charAt(0).toUpperCase() + s.slice(1);
+    const nm = data.meds.length;
+    const nr = new Set(data.meds.flatMap(m => m.rooms.map(norm))).size;
+    $('stMeds').textContent = nm;  $('stMedsL').textContent = nm === 1 ? 'medicación' : 'medicaciones';
+    $('stRooms').textContent = nr; $('stRoomsL').textContent = 'hab.';
+  }
+  setInterval(renderHeader, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) renderHeader(); });
+
+  // ---------- list ----------
+  const qEl = $('q');
+  function renderList(){
+    const q = norm(qEl.value);
+    $('qClear').classList.toggle('hidden', !q);
+    const meds = [...data.meds].sort((a,b) => collator.compare(a.name, b.name));
+    const res = [];
+    for (const m of meds){
+      if (!q){ res.push({m, roomHits:[]}); continue; }
+      const nameHit = norm(m.name).includes(q);
+      const roomHits = m.rooms.filter(r => norm(r).startsWith(q));
+      const noteHit = norm(m.notes).includes(q);
+      if (nameHit || roomHits.length || noteHit) res.push({m, roomHits, nameHit, noteHit});
+    }
+    renderHeader();
+
+    const list = $('list');
+    if (!data.meds.length){
+      list.innerHTML = `<li class="empty"><strong>Aún no hay medicaciones</strong>Pulsa «Añadir» para crear la primera.</li>`;
+      return;
+    }
+    if (!res.length){
+      list.innerHTML = `<li class="empty"><strong>Sin resultados</strong>No hay nada que coincida con «${esc(qEl.value)}».</li>`;
+      return;
+    }
+    list.innerHTML = res.map(({m, roomHits, noteHit}) => {
+      const MAX = 8;
+      // show matching rooms first when searching by room
+      const ordered = roomHits.length ? [...roomHits, ...m.rooms.filter(r => !roomHits.includes(r))] : m.rooms;
+      const chips = ordered.slice(0, MAX).map(r => `<span class="chip-mini${roomHits.includes(r)?' hit':''}">${esc(r)}</span>`).join('')
+        + (ordered.length > MAX ? `<span class="chip-mini more">+${ordered.length-MAX}</span>` : '');
+      const note = (m.notes||'').split('\n').find(l => l.trim()) || '';
+      const n = m.rooms.length;
+      return `<li class="item"><button data-id="${m.id}">
+        <div class="item-head"><span class="item-name">${highlight(m.name || 'Sin nombre', q)}</span>
+        <span class="item-n">${n} hab.</span></div>
+        ${note ? `<div class="item-note">${noteHit ? highlight(note, q) : esc(note)}</div>` : ''}
+        ${n ? `<div class="chips-mini">${chips}</div>` : ''}
+      </button></li>`;
+    }).join('');
+  }
+  qEl.addEventListener('input', renderList);
+  $('qClear').onclick = () => { qEl.value=''; renderList(); qEl.focus(); };
+  $('list').addEventListener('click', e => {
+    const b = e.target.closest('button[data-id]'); if (b) openDetail(b.dataset.id);
+  });
+
+  // ---------- detail ----------
+  let current = null;
+  const detail = $('detail');
+
+  function openDetail(id, push = true){
+    current = byId(id); if (!current) return;
+    $('dName').value = current.name;
+    $('dNotes').value = current.notes || '';
+    renderRooms(); renderMeta();
+    detail.classList.add('open'); detail.setAttribute('aria-hidden','false'); detail.scrollTop = 0;
+    if (push) try { history.pushState({med:id}, ''); } catch(e){}
+  }
+  function closeDetail(fromPop = false){
+    if (!detail.classList.contains('open')) return;
+    flushName();
+    detail.classList.remove('open'); detail.setAttribute('aria-hidden','true');
+    current = null; renderList();
+    if (!fromPop) try { if (history.state && history.state.med) history.back(); } catch(e){}
+  }
+  $('backBtn').onclick = () => closeDetail();
+  window.addEventListener('popstate', () => { if (dialogOpen()) { closeDialog(); try{history.pushState(history.state,'')}catch(e){} return; } closeDetail(true); });
+
+  function renderRooms(){
+    const box = $('dRooms');
+    const r = current.rooms;
+    $('dRoomCount').textContent = r.length ? r.length : '';
+    box.innerHTML = r.length
+      ? r.map(x => `<span class="room">${esc(x)}<button data-room="${esc(x)}" aria-label="Quitar habitación ${esc(x)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span>`).join('')
+      : `<div class="rooms-empty">Sin habitaciones asignadas.</div>`;
+  }
+  function renderMeta(){
+    $('dMeta').textContent = current.updated ? 'Última modificación: ' + fmtDate(current.updated) : '';
+  }
+  let savedT;
+  function touch(){
+    current.updated = Date.now(); persist(); renderMeta();
+    const s = $('saved'); s.classList.add('show'); clearTimeout(savedT); savedT = setTimeout(() => s.classList.remove('show'), 1200);
+  }
+
+  // Enter key helper (no <form>: sandboxed previews block form submission)
+  const onEnter = (el, fn) => el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.isComposing){ e.preventDefault(); fn(); }
+  });
+  $('roomAdd').addEventListener('click', addRooms);
+  onEnter($('roomInput'), addRooms);
+  function addRooms(){
+    const inp = $('roomInput');
+    const parts = inp.value.split(/[\s,;]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
+    if (!parts.length) return;
+    let added = 0, dup = [];
+    for (const p of parts){
+      if (current.rooms.some(r => norm(r) === norm(p))) dup.push(p);
+      else { current.rooms.push(p); added++; }
+    }
+    sortRooms(current.rooms);
+    inp.value = '';
+    if (added){ touch(); renderRooms(); }
+    if (dup.length) toast(dup.length === 1 ? `La habitación ${dup[0]} ya estaba` : `Ya estaban: ${dup.join(', ')}`);
+    inp.focus();
+  }
+
+  $('dRooms').addEventListener('click', e => {
+    const b = e.target.closest('button[data-room]'); if (!b) return;
+    const room = b.dataset.room, med = current;
+    med.rooms = med.rooms.filter(r => r !== room);
+    touch(); renderRooms();
+    toast(`Habitación ${room} quitada`, 'Deshacer', () => {
+      if (!med.rooms.includes(room)){ med.rooms.push(room); sortRooms(med.rooms); }
+      med.updated = Date.now(); persist();
+      if (current === med){ renderRooms(); renderMeta(); } else renderList();
+    });
+  });
+
+  let nameT, notesT;
+  function flushName(){
+    if (!current) return;
+    clearTimeout(nameT); clearTimeout(notesT);
+    const n = $('dName').value.trim(), notes = $('dNotes').value;
+    let changed = false;
+    if (n && n !== current.name){ current.name = n; changed = true; }
+    if (notes !== (current.notes||'')){ current.notes = notes; changed = true; }
+    if (changed) touch();
+  }
+  $('dName').addEventListener('input', () => { clearTimeout(nameT); nameT = setTimeout(flushName, 500); });
+  $('dName').addEventListener('blur', () => { if (!$('dName').value.trim() && current) $('dName').value = current.name; flushName(); });
+  $('dNotes').addEventListener('input', () => { clearTimeout(notesT); notesT = setTimeout(flushName, 500); });
+  $('dNotes').addEventListener('blur', flushName);
+  window.addEventListener('pagehide', flushName);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flushName(); });
+
+  $('delBtn').onclick = () => {
+    const med = current;
+    showDialog(`<div class="badge danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></div><h3>¿Eliminar «${esc(med.name)}»?</h3><p>Se borrarán sus notas y sus ${med.rooms.length} habitaciones.</p>
+      <div class="row"><button class="btn btn-ghost" data-act="cancel">Cancelar</button><button class="btn btn-danger" data-act="ok">Eliminar</button></div>`,
+      act => {
+        if (act !== 'ok') return;
+        const idx = data.meds.indexOf(med);
+        data.meds.splice(idx, 1); persist(); closeDetail();
+        toast(`«${med.name}» eliminada`, 'Deshacer', () => { data.meds.splice(Math.min(idx, data.meds.length), 0, med); persist(); renderList(); });
+      });
+  };
+
+  // ---------- add ----------
+  $('addBtn').onclick = () => {
+    const pre = qEl.value.trim() && !/^\d/.test(qEl.value.trim()) ? qEl.value.trim() : '';
+    showDialog(`<div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div><h3>Nueva medicación</h3><p>Escribe el nombre; después podrás añadir habitaciones y notas.</p>
+      <div id="newForm"><input type="text" id="newName" placeholder="Nombre (ej. Paracetamol 1 g)" value="${esc(pre)}" enterkeyhint="done" autocomplete="off">
+      <div class="row"><button type="button" class="btn btn-ghost" data-act="cancel">Cancelar</button><button type="button" class="btn btn-primary" id="createBtn">Crear</button></div></div>`);
+    const inp = $('newName'); setTimeout(() => inp.focus(), 50);
+    $('createBtn').addEventListener('click', create);
+    onEnter(inp, create);
+    function create(){
+      const name = inp.value.trim(); if (!name){ inp.focus(); return; }
+      const ex = data.meds.find(m => norm(m.name) === norm(name));
+      closeDialog();
+      if (ex){ toast('Ya existe, abriéndola'); openDetail(ex.id); return; }
+      const m = { id: uid(), name, notes:'', rooms:[], created: Date.now(), updated: Date.now() };
+      data.meds.push(m); persist(); qEl.value=''; renderList(); openDetail(m.id);
+      setTimeout(() => $('roomInput').focus(), 260);
+    }
+  };
+
+  // ---------- menu: backup ----------
+  $('menuBtn').onclick = () => {
+    const last = data.lastBackup ? 'Última copia: ' + fmtDate(data.lastBackup) : 'Aún no has hecho ninguna copia';
+    showDialog(`<h3>Opciones</h3><p>Los datos se guardan solo en este móvil. ${esc(last)}.</p>
+      <button class="menu-item" data-act="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span>Guardar copia de seguridad<small>Descarga un archivo .json con todo</small></span></button>
+      <button class="menu-item" data-act="import"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg><span>Restaurar copia<small>Carga un archivo .json guardado antes</small></span></button>
+      <button class="menu-item" data-act="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copiar datos como texto<small>Para pegarlos en un correo o nota</small></span></button>
+      <div class="row" style="margin-top:8px"><button class="btn btn-ghost" data-act="cancel">Cerrar</button></div>`,
+      act => {
+        if (act === 'export') exportFile();
+        if (act === 'import') $('importFile').click();
+        if (act === 'copy') copyText();
+      });
+  };
+  const dump = () => JSON.stringify({ app:'medicacion-planta', version:1, exported:new Date().toISOString(), meds:data.meds }, null, 1);
+  function exportFile(){
+    try{
+      const blob = new Blob([dump()], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'medineni-' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      data.lastBackup = Date.now(); persist();
+      toast('Copia descargada');
+    } catch(e){ copyText(); }
+  }
+  function copyText(){
+    const txt = dump();
+    const done = () => { data.lastBackup = Date.now(); persist(); toast('Datos copiados'); };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, () => showCopyBox(txt));
+    } else showCopyBox(txt);
+  }
+  function showCopyBox(txt){
+    showDialog(`<h3>Copia de seguridad</h3><p>Mantén pulsado el texto, «Seleccionar todo» y copia.</p>
+      <textarea class="copy-area" readonly>${esc(txt)}</textarea>
+      <div class="row"><button class="btn btn-ghost" data-act="cancel">Cerrar</button></div>`);
+  }
+  $('importFile').addEventListener('change', e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      let parsed;
+      try { parsed = JSON.parse(rd.result); } catch(err){ toast('El archivo no es válido'); return; }
+      const meds = Array.isArray(parsed) ? parsed : parsed.meds;
+      if (!Array.isArray(meds)){ toast('El archivo no es válido'); return; }
+      const clean = meds.filter(m => m && m.name).map(m => ({
+        id: m.id || uid(), name: String(m.name), notes: String(m.notes||''),
+        rooms: sortRooms([...new Set((m.rooms||[]).map(r => String(r).trim().toUpperCase()).filter(Boolean))]),
+        created: m.created || Date.now(), updated: m.updated || Date.now()
+      }));
+      showDialog(`<h3>Restaurar copia</h3><p>El archivo tiene ${clean.length} medicaciones. ¿Qué quieres hacer?</p>
+        <div class="row" style="flex-direction:column">
+          <button class="btn btn-primary" data-act="merge">Combinar con lo actual</button>
+          <button class="btn btn-danger" data-act="replace">Reemplazar todo</button>
+          <button class="btn btn-ghost" data-act="cancel">Cancelar</button></div>`,
+        act => {
+          if (act === 'replace') data.meds = clean;
+          else if (act === 'merge'){
+            for (const m of clean){
+              const ex = data.meds.find(x => norm(x.name) === norm(m.name));
+              if (!ex) data.meds.push(m);
+              else {
+                ex.rooms = sortRooms([...new Set([...ex.rooms, ...m.rooms])]);
+                if (m.notes && !ex.notes.includes(m.notes)) ex.notes = ex.notes ? ex.notes + '\n' + m.notes : m.notes;
+                ex.updated = Date.now();
+              }
+            }
+          } else return;
+          persist(); renderList(); toast('Copia restaurada');
+        });
+    };
+    rd.readAsText(f);
+  });
+
+  // ---------- dialog & toast ----------
+  let dialogCb = null;
+  const dialogOpen = () => !!$('dialog').firstChild;
+  function showDialog(html, cb){
+    dialogCb = cb || null;
+    $('dialog').innerHTML = `<div class="scrim"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  }
+  function closeDialog(){ $('dialog').innerHTML = ''; dialogCb = null; }
+  $('dialog').addEventListener('click', e => {
+    if (e.target.classList.contains('scrim')) { closeDialog(); return; }
+    const b = e.target.closest('[data-act]'); if (!b) return;
+    const cb = dialogCb, act = b.dataset.act; closeDialog(); cb && cb(act);
+  });
+
+  let toastT;
+  function toast(msg, actionLabel, action){
+    clearTimeout(toastT);
+    const host = $('toastHost');
+    host.innerHTML = `<div class="toast" role="status"><span>${esc(msg)}</span>${actionLabel ? `<button>${esc(actionLabel)}</button>` : ''}</div>`;
+    if (actionLabel) host.querySelector('button').onclick = () => { host.innerHTML=''; action(); };
+    toastT = setTimeout(() => host.innerHTML = '', actionLabel ? 5000 : 2200);
+  }
+
+  // ---------- offline (only when served over http/https) ----------
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch(e){}
+  }
+
+  renderList();
+})();
+</script>
+</body>
+</html>
