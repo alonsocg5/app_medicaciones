@@ -101,7 +101,9 @@
   .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px;display:flex;justify-content:space-between}
   .rooms{display:flex;flex-wrap:wrap;gap:8px;min-height:10px}
   .room{display:flex;align-items:center;gap:2px;background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:0 0 0 14px;height:46px;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
-  .room button{width:40px;height:46px;border:0;background:transparent;color:inherit;display:grid;place-items:center;opacity:.75}
+  .room{max-width:100%;min-width:0}
+  .room-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .room button{flex:none;width:40px;height:46px;border:0;background:transparent;color:inherit;display:grid;place-items:center;opacity:.75}
   .room button:active{opacity:1}
   .room button svg{width:18px;height:18px}
   .rooms-empty{color:var(--muted);font-size:15px;padding:4px 0 2px}
@@ -195,10 +197,10 @@
       <h2><span>Habitaciones</span><span id="dRoomCount"></span></h2>
       <div class="rooms" id="dRooms"></div>
       <div class="add-room" id="roomForm">
-        <input id="roomInput" type="text" inputmode="numeric" placeholder="Nº habitación" enterkeyhint="done" autocomplete="off" aria-label="Número de habitación">
+        <input id="roomInput" type="text" inputmode="text" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="Habitación (ej. 215B)" enterkeyhint="done" autocomplete="off" aria-label="Habitación">
         <button class="btn btn-primary" type="button" id="roomAdd">Añadir</button>
       </div>
-      <div class="small">Puedes añadir varias a la vez separadas por comas o espacios (ej. 101, 102, 215B).</div>
+      <div class="small">Admite números y letras. Para añadir varias a la vez, sepáralas con comas (ej. 101, 215B, Box A).</div>
     </div>
 
     <div class="card">
@@ -340,7 +342,7 @@
     const r = current.rooms;
     $('dRoomCount').textContent = r.length ? r.length : '';
     box.innerHTML = r.length
-      ? r.map(x => `<span class="room">${esc(x)}<button data-room="${esc(x)}" aria-label="Quitar habitación ${esc(x)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span>`).join('')
+      ? r.map(x => `<span class="room"><span class="room-t">${esc(x)}</span><button data-room="${esc(x)}" aria-label="Quitar habitación ${esc(x)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span>`).join('')
       : `<div class="rooms-empty">Sin habitaciones asignadas.</div>`;
   }
   function renderMeta(){
@@ -360,7 +362,12 @@
   onEnter($('roomInput'), addRooms);
   function addRooms(){
     const inp = $('roomInput');
-    const parts = inp.value.split(/[\s,;]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
+    // Comas separan siempre. Los espacios solo separan si todas las palabras llevan número
+    // ("101 102" -> 2 habitaciones; "Box A" o "Aislamiento 2" -> 1 habitación).
+    const parts = [...new Set(inp.value.split(/[,;\n]+/).flatMap(seg => {
+      const words = seg.trim().split(/\s+/).filter(Boolean);
+      return (words.length > 1 && words.every(w => /\d/.test(w))) ? words : [words.join(' ')];
+    }).filter(Boolean))];
     if (!parts.length) return;
     let added = 0, dup = [];
     for (const p of parts){
@@ -484,7 +491,7 @@
       if (!Array.isArray(meds)){ toast('El archivo no es válido'); return; }
       const clean = meds.filter(m => m && m.name).map(m => ({
         id: m.id || uid(), name: String(m.name), notes: String(m.notes||''),
-        rooms: sortRooms([...new Set((m.rooms||[]).map(r => String(r).trim().toUpperCase()).filter(Boolean))]),
+        rooms: sortRooms([...new Set((m.rooms||[]).map(r => String(r).replace(/\s+/g,' ').trim()).filter(Boolean))]),
         created: m.created || Date.now(), updated: m.updated || Date.now()
       }));
       showDialog(`<h3>Restaurar copia</h3><p>El archivo tiene ${clean.length} medicaciones. ¿Qué quieres hacer?</p>
